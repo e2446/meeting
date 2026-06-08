@@ -9,50 +9,56 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
-      min-height: 100vh;
       background: #faf6f1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 3rem 2rem;
       font-family: 'Source Sans 3', sans-serif;
       position: relative;
-      overflow: hidden;
     }
 
     body::before {
       content: '';
-      position: absolute;
+      position: fixed;
       top: 0; left: 0; right: 0;
-      height: 5px;
+      height: 6px;
       background: #7c4f2a;
+      z-index: 10;
     }
 
     body::after {
       content: '';
-      position: absolute;
+      position: fixed;
       bottom: 0; left: 0; right: 0;
-      height: 5px;
+      height: 6px;
       background: #7c4f2a;
+      z-index: 10;
     }
 
     .corner {
-      position: absolute;
-      width: 36px;
-      height: 36px;
+      position: fixed;
+      width: 40px;
+      height: 40px;
       border-color: #a0673a;
       border-style: solid;
+      z-index: 10;
     }
-    .corner.tl { top: 18px; left: 18px; border-width: 2px 0 0 2px; }
-    .corner.tr { top: 18px; right: 18px; border-width: 2px 2px 0 0; }
-    .corner.bl { bottom: 18px; left: 18px; border-width: 0 0 2px 2px; }
-    .corner.br { bottom: 18px; right: 18px; border-width: 0 2px 2px 0; }
+    .corner.tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
+    .corner.tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: 16px; left: 16px; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; }
 
     .company-name {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-size: clamp(2.2rem, 5vw, 4rem);
       font-weight: 700;
       color: #4a2c0e;
       letter-spacing: 0.18em;
@@ -62,28 +68,28 @@
     }
 
     .tagline {
-      font-size: 11px;
+      font-size: clamp(9px, 1vw, 12px);
       color: #a07850;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      margin-bottom: 2.5rem;
+      margin-bottom: clamp(1rem, 2vh, 2rem);
       text-align: center;
     }
 
     .divider {
-      width: 120px;
+      width: 100px;
       height: 1.5px;
       background: #a0673a;
-      margin: 0 auto 2.5rem;
+      margin: 0 auto clamp(1rem, 2vh, 2rem);
       opacity: 0.5;
     }
 
     .notice-card {
       background: #ffffff;
       border: 1.5px solid #d9c4ae;
-      border-radius: 12px;
-      padding: 2.5rem 3rem;
-      max-width: 560px;
+      border-radius: 14px;
+      padding: clamp(1.2rem, 3vh, 2.2rem) clamp(1.5rem, 4vw, 3rem);
+      max-width: min(560px, 88vw);
       width: 100%;
       text-align: center;
       position: relative;
@@ -106,13 +112,13 @@
       background: #f5ede3;
       border: 1px solid #d9b899;
       border-radius: 20px;
-      padding: 5px 14px;
-      font-size: 12px;
+      padding: 5px 16px;
+      font-size: clamp(10px, 1.1vw, 13px);
       font-weight: 600;
       color: #7c4f2a;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      margin-bottom: 1.8rem;
+      margin-bottom: clamp(0.8rem, 1.5vh, 1.5rem);
     }
 
     .dot {
@@ -129,23 +135,23 @@
     }
 
     .headline {
-      font-size: 12px;
+      font-size: clamp(10px, 1vw, 13px);
       color: #b08060;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
     }
 
     .event-title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
       font-weight: 400;
       color: #3a1f08;
-      margin-bottom: 1.8rem;
+      margin-bottom: clamp(0.8rem, 1.5vh, 1.5rem);
       line-height: 1.3;
     }
 
-    .venue-row {
+    .venue-row, .schedule-row {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -153,57 +159,25 @@
       background: #faf0e6;
       border: 1px solid #d9c4ae;
       border-radius: 8px;
-      padding: 1rem 1.5rem;
-      margin-bottom: 1.2rem;
+      padding: clamp(0.6rem, 1.2vh, 1rem) 1.5rem;
+      margin-bottom: clamp(0.6rem, 1vh, 1rem);
     }
 
-    .venue-icon {
-      font-size: 22px;
+    .venue-row i, .schedule-row i {
+      font-size: clamp(18px, 2vw, 24px);
       color: #7c4f2a;
     }
 
-    .venue-label {
-      font-size: 11px;
-      color: #b08060;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin-bottom: 3px;
-    }
-
-    .venue-name {
-      font-size: 17px;
-      font-weight: 600;
-      color: #4a2c0e;
-      letter-spacing: 0.04em;
-    }
-
-    .schedule-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: #faf0e6;
-      border: 1px solid #d9c4ae;
-      border-radius: 8px;
-      padding: 0.85rem 1.5rem;
-      margin-bottom: 1.2rem;
-    }
-
-    .schedule-row i {
-      font-size: 18px;
-      color: #7c4f2a;
-    }
-
-    .schedule-label {
-      font-size: 11px;
+    .venue-label, .schedule-label {
+      font-size: clamp(9px, 0.9vw, 11px);
       color: #b08060;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       margin-bottom: 2px;
     }
 
-    .schedule-time {
-      font-size: 15px;
+    .venue-name, .schedule-time {
+      font-size: clamp(14px, 1.6vw, 18px);
       font-weight: 600;
       color: #4a2c0e;
       letter-spacing: 0.04em;
@@ -214,15 +188,15 @@
       align-items: center;
       justify-content: center;
       gap: 7px;
-      margin-top: 0.4rem;
-      font-size: 13px;
+      margin-top: 0.5rem;
+      font-size: clamp(12px, 1.2vw, 15px);
       color: #a07850;
       letter-spacing: 0.1em;
     }
 
     .live-time-row i {
       color: #7c4f2a;
-      font-size: 15px;
+      font-size: clamp(14px, 1.3vw, 17px);
       vertical-align: -1px;
     }
 
@@ -239,7 +213,7 @@
   <div class="corner br"></div>
 
   <p class="company-name">Integral</p>
-  <p class="tagline">DIRTI COFFEE</p>
+
   <div class="divider"></div>
 
   <div class="notice-card">
@@ -248,11 +222,11 @@
       In Progress
     </div>
 
-    <p class="headline">Meeting currently held at</p>
+    <p class="headline">DIRTI COFFEE </p>
     <p class="event-title">Company Training</p>
 
     <div class="venue-row">
-      <i class="ti ti-building venue-icon" aria-hidden="true"></i>
+      <i class="ti ti-building" aria-hidden="true"></i>
       <div>
         <p class="venue-label">Venue</p>
         <p class="venue-name">Function Hall</p>
