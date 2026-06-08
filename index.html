@@ -8,48 +8,134 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body { background: #0a0a0a; font-family: 'Source Sans 3', sans-serif; }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+    /* ── INTRO ── */
+    #intro {
+      position: fixed; inset: 0;
+      background: #0a0a0a;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    #intro.show { opacity: 1; }
+    #intro.hide { opacity: 0; pointer-events: none; }
+
+    .scanline {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.018) 2px, rgba(255,255,255,0.018) 4px);
+      pointer-events: none; z-index: 1;
+    }
+    .vignette {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.8) 100%);
+      pointer-events: none; z-index: 2;
     }
 
-    body {
+    .intro-content { position: relative; z-index: 3; text-align: center; }
+
+    .welcome-label {
+      font-size: clamp(10px, 1.2vw, 13px);
+      letter-spacing: 0.5em; text-transform: uppercase;
+      color: #6a5040; margin-bottom: 1.5rem;
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.7s 0.2s ease, transform 0.7s 0.2s ease;
+    }
+    .intro-content.animate-in .welcome-label { opacity: 1; transform: translateY(0); }
+
+    .intro-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 700; color: #c8a07a;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      line-height: 1; position: relative;
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.7s 0.5s ease, transform 0.7s 0.5s ease;
+    }
+    .intro-content.animate-in .intro-logo { opacity: 1; transform: translateY(0); }
+
+    .intro-logo::before, .intro-logo::after {
+      content: attr(data-text);
+      position: absolute; inset: 0;
+      color: #c8a07a; opacity: 0;
+    }
+
+    .intro-divider {
+      width: 80px; height: 1px; background: #5a4030;
+      margin: 1.5rem auto;
+      opacity: 0; transform: scaleX(0);
+      transition: opacity 0.5s 0.9s ease, transform 0.5s 0.9s ease;
+    }
+    .intro-content.animate-in .intro-divider { opacity: 1; transform: scaleX(1); }
+
+    .intro-sub {
+      font-size: clamp(9px, 1vw, 11px);
+      color: #4a3020; letter-spacing: 0.4em; text-transform: uppercase;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.5s 1.1s ease, transform 0.5s 1.1s ease;
+    }
+    .intro-content.animate-in .intro-sub { opacity: 1; transform: translateY(0); }
+
+    /* ── SUBTLE GLITCH ── */
+    .glitching .intro-logo {
+      animation: glitchMain 0.25s steps(1) infinite;
+    }
+    .glitching .intro-logo::before {
+      opacity: 1;
+      animation: glitchSliceA 0.25s steps(1) infinite;
+    }
+    .glitching .intro-logo::after {
+      opacity: 1;
+      animation: glitchSliceB 0.25s steps(1) infinite;
+    }
+
+    @keyframes glitchMain {
+      0%,100% { transform: translate(0,0); }
+      30%      { transform: translate(-2px, 0); }
+      60%      { transform: translate(2px, 0); }
+    }
+    @keyframes glitchSliceA {
+      0%,100% { clip-path: polygon(0 0,0 0,0 0,0 0); transform: translate(0,0); color: #ff6060; }
+      20%     { clip-path: polygon(0 25%, 100% 25%, 100% 40%, 0 40%); transform: translate(-3px,0); }
+      50%     { clip-path: polygon(0 60%, 100% 60%, 100% 72%, 0 72%); transform: translate(3px,0); }
+      80%     { clip-path: polygon(0 10%, 100% 10%, 100% 22%, 0 22%); transform: translate(-2px,0); }
+    }
+    @keyframes glitchSliceB {
+      0%,100% { clip-path: polygon(0 0,0 0,0 0,0 0); transform: translate(0,0); color: #60d0ff; }
+      20%     { clip-path: polygon(0 55%, 100% 55%, 100% 68%, 0 68%); transform: translate(3px,0); }
+      50%     { clip-path: polygon(0 30%, 100% 30%, 100% 42%, 0 42%); transform: translate(-3px,0); }
+      80%     { clip-path: polygon(0 75%, 100% 75%, 100% 85%, 0 85%); transform: translate(2px,0); }
+    }
+
+    /* ── MAIN SCREEN ── */
+    #main {
+      position: fixed; inset: 0;
       background: #faf6f1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Source Sans 3', sans-serif;
-      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.6s ease;
     }
+    #main.show { opacity: 1; pointer-events: all; }
+    #main.hide { opacity: 0; pointer-events: none; }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 6px;
-      background: #7c4f2a;
-      z-index: 10;
+    #main::before {
+      content: ''; position: fixed;
+      top: 0; left: 0; right: 0; height: 6px;
+      background: #7c4f2a; z-index: 10;
     }
-
-    body::after {
-      content: '';
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 6px;
-      background: #7c4f2a;
-      z-index: 10;
+    #main::after {
+      content: ''; position: fixed;
+      bottom: 0; left: 0; right: 0; height: 6px;
+      background: #7c4f2a; z-index: 10;
     }
 
     .corner {
-      position: fixed;
-      width: 40px;
-      height: 40px;
-      border-color: #a0673a;
-      border-style: solid;
-      z-index: 10;
+      position: fixed; width: 40px; height: 40px;
+      border-color: #a0673a; border-style: solid; z-index: 10;
     }
     .corner.tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
     .corner.tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; }
@@ -58,208 +144,183 @@
 
     .company-name {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2.2rem, 5vw, 4rem);
-      font-weight: 700;
-      color: #4a2c0e;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin-bottom: 0.2rem;
-      text-align: center;
+      font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 700;
+      color: #4a2c0e; letter-spacing: 0.18em; text-transform: uppercase;
+      margin-bottom: 0.2rem; text-align: center;
     }
-
-    .tagline {
-      font-size: clamp(9px, 1vw, 12px);
-      color: #a07850;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      margin-bottom: clamp(1rem, 2vh, 2rem);
-      text-align: center;
-    }
-
     .divider {
-      width: 100px;
-      height: 1.5px;
-      background: #a0673a;
-      margin: 0 auto clamp(1rem, 2vh, 2rem);
-      opacity: 0.5;
+      width: 100px; height: 1.5px; background: #a0673a;
+      margin: 0 auto clamp(1rem, 2vh, 2rem); opacity: 0.5;
     }
-
     .notice-card {
-      background: #ffffff;
-      border: 1.5px solid #d9c4ae;
+      background: #ffffff; border: 1.5px solid #d9c4ae;
       border-radius: 14px;
       padding: clamp(1.2rem, 3vh, 2.2rem) clamp(1.5rem, 4vw, 3rem);
-      max-width: min(560px, 88vw);
-      width: 100%;
-      text-align: center;
-      position: relative;
-      box-shadow: 0 4px 24px rgba(124, 79, 42, 0.08);
+      max-width: min(560px, 88vw); width: 100%;
+      text-align: center; position: relative;
+      box-shadow: 0 4px 24px rgba(124,79,42,0.08);
     }
-
     .notice-card::before {
-      content: '';
-      position: absolute;
+      content: ''; position: absolute;
       top: -1.5px; left: 32px; right: 32px;
-      height: 3px;
-      background: #7c4f2a;
-      border-radius: 2px;
+      height: 3px; background: #7c4f2a; border-radius: 2px;
     }
-
     .live-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: #f5ede3;
-      border: 1px solid #d9b899;
-      border-radius: 20px;
-      padding: 5px 16px;
-      font-size: clamp(10px, 1.1vw, 13px);
-      font-weight: 600;
-      color: #7c4f2a;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #f5ede3; border: 1px solid #d9b899;
+      border-radius: 20px; padding: 5px 16px;
+      font-size: clamp(10px, 1.1vw, 13px); font-weight: 600;
+      color: #7c4f2a; letter-spacing: 0.12em; text-transform: uppercase;
       margin-bottom: clamp(0.8rem, 1.5vh, 1.5rem);
     }
-
     .dot {
-      width: 8px;
-      height: 8px;
-      background: #7c4f2a;
-      border-radius: 50%;
-      animation: pulse 1.6s ease-in-out infinite;
+      width: 8px; height: 8px; background: #7c4f2a;
+      border-radius: 50%; animation: pulse 1.6s ease-in-out infinite;
     }
-
     @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.3; transform: scale(0.75); }
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.3; transform: scale(0.75); }
     }
-
     .headline {
-      font-size: clamp(10px, 1vw, 13px);
-      color: #b08060;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      margin-bottom: 0.5rem;
+      font-size: clamp(10px, 1vw, 13px); color: #b08060;
+      letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.5rem;
     }
-
     .event-title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
-      font-weight: 400;
-      color: #3a1f08;
-      margin-bottom: clamp(0.8rem, 1.5vh, 1.5rem);
-      line-height: 1.3;
+      font-size: clamp(1.4rem, 3.5vw, 2.2rem); font-weight: 400;
+      color: #3a1f08; margin-bottom: clamp(0.8rem, 1.5vh, 1.5rem); line-height: 1.3;
     }
-
     .venue-row, .schedule-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      background: #faf0e6;
-      border: 1px solid #d9c4ae;
-      border-radius: 8px;
-      padding: clamp(0.6rem, 1.2vh, 1rem) 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; background: #faf0e6; border: 1px solid #d9c4ae;
+      border-radius: 8px; padding: clamp(0.6rem, 1.2vh, 1rem) 1.5rem;
       margin-bottom: clamp(0.6rem, 1vh, 1rem);
     }
-
-    .venue-row i, .schedule-row i {
-      font-size: clamp(18px, 2vw, 24px);
-      color: #7c4f2a;
-    }
-
+    .venue-row i, .schedule-row i { font-size: clamp(18px, 2vw, 24px); color: #7c4f2a; }
     .venue-label, .schedule-label {
-      font-size: clamp(9px, 0.9vw, 11px);
-      color: #b08060;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin-bottom: 2px;
+      font-size: clamp(9px, 0.9vw, 11px); color: #b08060;
+      letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 2px;
     }
-
     .venue-name, .schedule-time {
-      font-size: clamp(14px, 1.6vw, 18px);
-      font-weight: 600;
-      color: #4a2c0e;
-      letter-spacing: 0.04em;
+      font-size: clamp(14px, 1.6vw, 18px); font-weight: 600;
+      color: #4a2c0e; letter-spacing: 0.04em;
     }
-
     .live-time-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      margin-top: 0.5rem;
-      font-size: clamp(12px, 1.2vw, 15px);
-      color: #a07850;
-      letter-spacing: 0.1em;
+      display: flex; align-items: center; justify-content: center;
+      gap: 7px; margin-top: 0.5rem;
+      font-size: clamp(12px, 1.2vw, 15px); color: #a07850; letter-spacing: 0.1em;
     }
-
-    .live-time-row i {
-      color: #7c4f2a;
-      font-size: clamp(14px, 1.3vw, 17px);
-      vertical-align: -1px;
-    }
-
-    #clock {
-      color: #5a3518;
-      font-weight: 500;
-    }
+    .live-time-row i { color: #7c4f2a; font-size: clamp(14px, 1.3vw, 17px); vertical-align: -1px; }
+    #clock { color: #5a3518; font-weight: 500; }
   </style>
 </head>
 <body>
-  <div class="corner tl"></div>
-  <div class="corner tr"></div>
-  <div class="corner bl"></div>
-  <div class="corner br"></div>
 
-  <p class="company-name">Integral</p>
-
-  <div class="divider"></div>
-
-  <div class="notice-card">
-    <div class="live-badge">
-      <span class="dot"></span>
-      In Progress
+  <!-- INTRO SCREEN -->
+  <div id="intro">
+    <div class="scanline"></div>
+    <div class="vignette"></div>
+    <div class="intro-content">
+      <p class="welcome-label">Welcome to</p>
+      <p class="intro-logo" data-text="Integral">Integral</p>
+      <div class="intro-divider"></div>
+      <p class="intro-sub">Building the future, together</p>
     </div>
+  </div>
 
-    <p class="headline">DIRTI COFFEE </p>
-    <p class="event-title">Company Training</p>
-
-    <div class="venue-row">
-      <i class="ti ti-building" aria-hidden="true"></i>
-      <div>
-        <p class="venue-label">Venue</p>
-        <p class="venue-name">Function Hall</p>
+  <!-- MAIN SCREEN -->
+  <div id="main">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+    <p class="company-name">Integral</p>
+    <div class="divider"></div>
+    <div class="notice-card">
+      <div class="live-badge"><span class="dot"></span>In Progress</div>
+      <p class="headline">DIRTI COFFEE</p>
+      <p class="event-title">Company Training</p>
+      <div class="venue-row">
+        <i class="ti ti-building" aria-hidden="true"></i>
+        <div><p class="venue-label">Venue</p><p class="venue-name">Function Hall</p></div>
       </div>
-    </div>
-
-    <div class="schedule-row">
-      <i class="ti ti-calendar-time" aria-hidden="true"></i>
-      <div>
-        <p class="schedule-label">Schedule</p>
-        <p class="schedule-time">8:00 AM – 5:00 PM</p>
+      <div class="schedule-row">
+        <i class="ti ti-calendar-time" aria-hidden="true"></i>
+        <div><p class="schedule-label">Schedule</p><p class="schedule-time">8:00 AM – 5:00 PM</p></div>
       </div>
-    </div>
-
-    <div class="live-time-row">
-      <i class="ti ti-clock"></i>
-      <span id="clock"></span>
+      <div class="live-time-row">
+        <i class="ti ti-clock"></i>
+        <span id="clock"></span>
+      </div>
     </div>
   </div>
 
   <script>
+    // Clock
     function updateClock() {
       const now = new Date();
-      let hours = now.getHours();
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      document.getElementById('clock').textContent =
-        hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+      let h = now.getHours();
+      const m = String(now.getMinutes()).padStart(2,'0');
+      const s = String(now.getSeconds()).padStart(2,'0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      document.getElementById('clock').textContent = h + ':' + m + ':' + s + ' ' + ampm;
     }
     updateClock();
     setInterval(updateClock, 1000);
+
+    const intro   = document.getElementById('intro');
+    const content = intro.querySelector('.intro-content');
+    const main    = document.getElementById('main');
+
+    // Timings (ms)
+    const WELCOME_HOLD   = 2500;   // how long welcome shows before glitch
+    const GLITCH_DUR     = 800;    // how long glitch lasts
+    const MAIN_HOLD = 60000; // 2 minutes on main screen
+    const FADE_DUR       = 600;    // css transition duration
+
+    function showIntro() {
+      // Reset intro state
+      intro.classList.remove('hide');
+      intro.classList.add('show');
+      content.classList.remove('animate-in', 'glitching');
+      // Force reflow so transitions re-fire
+      void content.offsetWidth;
+
+      // Trigger fade-in of welcome text
+      requestAnimationFrame(() => {
+        content.classList.add('animate-in');
+      });
+
+      // After hold → glitch
+      setTimeout(() => {
+        content.classList.add('glitching');
+
+        // After glitch → reveal main
+        setTimeout(() => {
+          content.classList.remove('glitching');
+          intro.classList.remove('show');
+          intro.classList.add('hide');
+          main.classList.add('show');
+
+          // After 2 min on main → go back
+          setTimeout(() => {
+            main.classList.remove('show');
+            main.classList.add('hide');
+            setTimeout(() => {
+              main.classList.remove('hide');
+              intro.classList.remove('hide');
+              showIntro();
+            }, FADE_DUR);
+          }, MAIN_HOLD);
+
+        }, GLITCH_DUR);
+
+      }, WELCOME_HOLD);
+    }
+
+    // Kick off
+    showIntro();
   </script>
 </body>
 </html>
